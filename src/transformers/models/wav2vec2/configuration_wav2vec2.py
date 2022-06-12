@@ -16,10 +16,12 @@
 
 import functools
 import operator
+from collections import OrderedDict
+from typing import Mapping
 
 from ...configuration_utils import PretrainedConfig
 from ...utils import logging
-
+from ...onnx import OnnxConfig
 
 logger = logging.get_logger(__name__)
 
@@ -336,3 +338,20 @@ class Wav2Vec2Config(PretrainedConfig):
     @property
     def inputs_to_logits_ratio(self):
         return functools.reduce(operator.mul, self.conv_stride, 1)
+
+
+# Copied from transformers.models.bert.configuration_bert.BertOnnxConfig
+class Wav2Vec2OnnxConfig(OnnxConfig):
+    @property
+    def inputs(self) -> Mapping[str, Mapping[int, str]]:
+        if self.task == "multiple-choice":
+            dynamic_axis = {0: "batch", 1: "choice", 2: "sequence"}
+        else:
+            dynamic_axis = {0: "batch", 1: "sequence"}
+        return OrderedDict(
+            [
+                ("input_ids", dynamic_axis),
+                ("attention_mask", dynamic_axis),
+                ("token_type_ids", dynamic_axis),
+            ]
+        )
