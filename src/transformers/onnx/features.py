@@ -368,6 +368,11 @@ class FeaturesManager:
         "vit": supported_features_mapping(
             "default", "image-classification", "masked-im", onnx_config_cls="models.vit.ViTOnnxConfig"
         ),
+        "wav2vec2": supported_features_mapping(
+            "default",
+            "masked-lm",
+            onnx_config_cls="models.wav2vec2.Wav2Vec2OnnxConfig",
+        ),
         "xlm": supported_features_mapping(
             "default",
             "masked-lm",
